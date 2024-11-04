@@ -8,8 +8,6 @@ use evdev::{AttributeSet, BusType, Device, InputEventKind, InputId, Key};
 use log::{debug, trace};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
-use std::thread::sleep;
-use std::time::Duration;
 
 /// Convert an evdev keyboard to a virtual gamepad.
 #[derive(Parser, Debug)]
@@ -56,6 +54,7 @@ struct Gamepad {
     device: VirtualDevice,
     keys: [Key; 6],
     axis_mapping: BTreeMap<(Key, i32), (AbsoluteAxisType, i32)>,
+    key_mapping: BTreeMap<Key, Key>,
 }
 
 impl Gamepad {
@@ -74,6 +73,20 @@ impl Gamepad {
             ((Key::KEY_LEFT, 0), (AbsoluteAxisType::ABS_X, 256)),
             ((Key::KEY_RIGHT, 1), (AbsoluteAxisType::ABS_X, 512)),
             ((Key::KEY_RIGHT, 0), (AbsoluteAxisType::ABS_X, 256)),
+            ((Key::KEY_DOWN, 1), (AbsoluteAxisType::ABS_Y, 512)),
+            ((Key::KEY_DOWN, 0), (AbsoluteAxisType::ABS_Y, 256)),
+            ((Key::KEY_UP, 1), (AbsoluteAxisType::ABS_Y, 0)),
+            ((Key::KEY_UP, 0), (AbsoluteAxisType::ABS_Y, 256)),
+        ]
+        .into();
+
+        let key_mapping = [
+            (Key::KEY_A, Key::BTN_SOUTH),
+            (Key::KEY_B, Key::BTN_EAST),
+            (Key::KEY_X, Key::BTN_NORTH),
+            (Key::KEY_Y, Key::BTN_WEST),
+            (Key::KEY_ENTER, Key::BTN_START),
+            (Key::KEY_BACKSPACE, Key::BTN_SELECT),
         ]
         .into();
 
@@ -109,6 +122,7 @@ impl Gamepad {
             device,
             keys,
             axis_mapping,
+            key_mapping,
         })
     }
 
@@ -121,13 +135,11 @@ impl Gamepad {
             self.device.emit(&[event])?;
         }
 
-        //     let down_event = InputEvent::new(EventType::ABSOLUTE, axis_code, 0);
-        //     let key_press = InputEvent::new(EventType::KEY, key.code(), 1);
-        //     gamepad.emit(&[down_event, key_press]).unwrap();
-
-        //     let up_event = InputEvent::new(EventType::ABSOLUTE, axis_code, 512);
-        //     let key_release = InputEvent::new(EventType::KEY, key.code(), 0);
-        //     gamepad.emit(&[up_event, key_release]).unwrap();
+        if let Some(&game_key) = self.key_mapping.get(&key) {
+            let event = InputEvent::new(EventType::KEY, game_key.code(), value);
+            debug!("Emitting {event:?}");
+            self.device.emit(&[event])?;
+        }
 
         Ok(())
     }
