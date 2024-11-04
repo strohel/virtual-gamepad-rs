@@ -52,7 +52,6 @@ fn main() -> Result<()> {
 
 struct Gamepad {
     device: VirtualDevice,
-    keys: [Key; 6],
     axis_mapping: BTreeMap<(Key, i32), (AbsoluteAxisType, i32)>,
     key_mapping: BTreeMap<Key, Key>,
 }
@@ -120,7 +119,6 @@ impl Gamepad {
 
         Ok(Gamepad {
             device,
-            keys,
             axis_mapping,
             key_mapping,
         })
