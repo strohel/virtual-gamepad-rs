@@ -63,6 +63,10 @@ impl Gamepad {
             Key::BTN_EAST,  // a.k.a. BTN_B
             Key::BTN_NORTH, // a.k.a. BTN_X
             Key::BTN_WEST,  // a.k.a. BTN_Y
+            Key::BTN_TL,
+            Key::BTN_TR,
+            Key::BTN_THUMBL,
+            Key::BTN_THUMBR,
             Key::BTN_START,
             Key::BTN_SELECT,
         ];
@@ -81,11 +85,19 @@ impl Gamepad {
 
         let key_mapping = [
             (Key::KEY_A, Key::BTN_SOUTH),
+            // alias
+            (Key::KEY_SPACE, Key::BTN_SOUTH),
             (Key::KEY_B, Key::BTN_EAST),
             (Key::KEY_X, Key::BTN_NORTH),
+            // alias
+            (Key::KEY_E, Key::BTN_NORTH),
             (Key::KEY_Y, Key::BTN_WEST),
             (Key::KEY_ENTER, Key::BTN_START),
             (Key::KEY_BACKSPACE, Key::BTN_SELECT),
+            (Key::KEY_PAGEUP, Key::BTN_TL),
+            (Key::KEY_PAGEDOWN, Key::BTN_TR),
+            (Key::KEY_COMMA, Key::BTN_THUMBL),
+            (Key::KEY_DOT, Key::BTN_THUMBR),
         ]
         .into();
 
