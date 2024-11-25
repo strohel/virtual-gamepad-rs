@@ -1,0 +1,6 @@
+[Unit]
+Description=virtual gamepad service for keyboard device %I
+
+[Service]
+Type=simple
+ExecStart=/home/strohel/.cargo/bin/virtual-gamepad --keyboard %I

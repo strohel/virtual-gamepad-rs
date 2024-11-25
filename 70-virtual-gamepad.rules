@@ -1,0 +1,14 @@
+# Allow the user at currently active logind seat simulate arbitrary input device with uinput.
+# Note: For any rule adding the uaccess tag to be effective, the name of the file it is defined in
+# has to lexically precede 73-seat-late.rules.
+SUBSYSTEM=="misc", KERNEL=="uinput", OPTIONS+="static_node=uinput", TAG+="uaccess"
+
+# 1. Match the device by it's symlink under /dev/input/.. this is an easy way, but adds
+#    a restriction that this rule must be _after_ 60-persistent-input.rules.
+# 2. Enable user access to keyboard using the uinput tag. This allows the user at currently active
+#    logind seat read all input from the device.
+# 3. Tag the device with systemd tag and make it trigger the user service providing virtual gamepad.
+SYMLINK=="input/by-id/usb-Lenovo_ThinkPad_Compact_USB_Keyboard_with_TrackPoint-event-kbd", \
+  TAG+="uaccess", \
+  PROGRAM="/usr/bin/systemd-escape --template=virtual-gamepad@.service $devnode", \
+  TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="%c"
