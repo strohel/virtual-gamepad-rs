@@ -10,5 +10,5 @@ SUBSYSTEM=="misc", KERNEL=="uinput", OPTIONS+="static_node=uinput", TAG+="uacces
 # 3. Tag the device with systemd tag and make it trigger the user service providing virtual gamepad.
 SYMLINK=="input/by-id/usb-Lenovo_ThinkPad_Compact_USB_Keyboard_with_TrackPoint-event-kbd", \
   TAG+="uaccess", \
-  PROGRAM="/usr/bin/systemd-escape --template=virtual-gamepad@.service $devnode", \
+  PROGRAM="/usr/bin/systemd-escape --template=virtual-gamepad-rs@.service $devnode", \
   TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="%c"
